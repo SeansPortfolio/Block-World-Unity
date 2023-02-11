@@ -52,7 +52,7 @@ namespace MyGame.BlockTerrain.Meshing
             VertexCount = TriangleCount0 = 0;
         }
 
-        public void AddQuad(float3 v1, float3 v2, float3 v3, float3 v4, float3 normal, int uv, int ao)
+        public void AddQuad(float3 v1, float3 v2, float3 v3, float3 v4, float3 normal, int uvLayer, int ao)
         {
             Vertices[VertexCount] = v1;
             Vertices[VertexCount + 1] = v2;
@@ -64,10 +64,10 @@ namespace MyGame.BlockTerrain.Meshing
             Normals[VertexCount + 2] = normal;
             Normals[VertexCount + 3] = normal;
 
-            UVs[VertexCount] = new float3(0f, 0f, uv);
-            UVs[VertexCount + 1] = new float3(1f, 0f, uv);
-            UVs[VertexCount + 2] = new float3(0f, 1f, uv);
-            UVs[VertexCount + 3] = new float3(1f, 1f, uv);
+            UVs[VertexCount] = new float3(0f, 0f, uvLayer);
+            UVs[VertexCount + 1] = new float3(1f, 0f, uvLayer);
+            UVs[VertexCount + 2] = new float3(0f, 1f, uvLayer);
+            UVs[VertexCount + 3] = new float3(1f, 1f, uvLayer);
 
             AO[VertexCount] = (ao & 0x01) == 0x01 ? Dark : Light;
             AO[VertexCount + 1] = (ao & 0x02) == 0x02 ? Dark : Light;

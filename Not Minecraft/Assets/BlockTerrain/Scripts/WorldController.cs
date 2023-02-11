@@ -47,7 +47,6 @@ namespace MyGame.BlockTerrain
             ChunkGOPool = new ObjectPool<ChunkGameObject>(CreateChunkGameObject);
             ChunkPositionMap = new Dictionary<int3, Chunk>();
 
-
             for (int x = 0; x < Configs.Width; x++)
             {
                 for (int z = 0; z < Configs.Depth; z++)

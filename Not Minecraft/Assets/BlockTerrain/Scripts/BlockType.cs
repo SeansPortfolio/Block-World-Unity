@@ -7,6 +7,8 @@ namespace MyGame.BlockTerrain
     public enum BlockType
     {
         Void,
-        Filled,
+        Stone,
+        Dirt,
+        Grass,
     }
 }

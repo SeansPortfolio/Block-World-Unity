@@ -24,7 +24,8 @@ namespace MyGame.BlockTerrain.Meshing
                 {
                     for (int z = 0; z < Chunk.Size; z++)
                     {
-                        if (blocks[Chunk.PointToIndex(x, y, z)] == BlockType.Void)
+                        var currentBlock = blocks[Chunk.PointToIndex(x, y, z)];
+                        if (currentBlock == BlockType.Void)
                         {
                             continue;
                         }
@@ -38,7 +39,7 @@ namespace MyGame.BlockTerrain.Meshing
                                 new float3(x + 0.5f, y + 0.5f, z + 0.5f),
                                 new float3(x - 0.5f, y + 0.5f, z + 0.5f),
                                 new float3(0f, 0f, 1f),
-                                0,
+                                currentBlock.GetTextureLayer(Direction.North),
                                 CalculateAO(chunk, x, y, z, Direction.North)
                             );
                         }
@@ -52,7 +53,7 @@ namespace MyGame.BlockTerrain.Meshing
                                 new float3(x + 0.5f, y + 0.5f, z - 0.5f),
                                 new float3(x + 0.5f, y + 0.5f, z + 0.5f),
                                 new float3(1f, 0f, 0f),
-                                1,
+                                currentBlock.GetTextureLayer(Direction.East),
                                 CalculateAO(chunk, x, y, z, Direction.East)
                             );
                         }
@@ -66,7 +67,7 @@ namespace MyGame.BlockTerrain.Meshing
                                 new float3(x - 0.5f, y + 0.5f, z - 0.5f),
                                 new float3(x + 0.5f, y + 0.5f, z - 0.5f),
                                 new float3(0f, 0f, -1f),
-                                2,
+                                currentBlock.GetTextureLayer(Direction.South),
                                 CalculateAO(chunk, x, y, z, Direction.South)
                             );
                         }
@@ -80,7 +81,7 @@ namespace MyGame.BlockTerrain.Meshing
                                 new float3(x - 0.5f, y + 0.5f, z + 0.5f),
                                 new float3(x - 0.5f, y + 0.5f, z - 0.5f),
                                 new float3(-1f, 0f, 0f),
-                                3, 
+                                currentBlock.GetTextureLayer(Direction.West), 
                                 CalculateAO(chunk, x, y, z, Direction.West)
                             );
                         }
@@ -94,7 +95,7 @@ namespace MyGame.BlockTerrain.Meshing
                                 new float3(x + 0.5f, y + 0.5f, z + 0.5f),
                                 new float3(x + 0.5f, y + 0.5f, z - 0.5f),
                                 new float3(0f, 1f, 0f),
-                                4,
+                                currentBlock.GetTextureLayer(Direction.Up),
                                 CalculateAO(chunk, x, y, z, Direction.Up)
                             );
                         }
@@ -108,7 +109,7 @@ namespace MyGame.BlockTerrain.Meshing
                                 new float3(x + 0.5f, y - 0.5f, z - 0.5f),
                                 new float3(x + 0.5f, y - 0.5f, z + 0.5f),
                                 new float3(0f, 1f, 0f),
-                                5, 
+                                currentBlock.GetTextureLayer(Direction.Down), 
                                 CalculateAO(chunk, x, y, z, Direction.Down)
                             );
                         }

@@ -31,21 +31,29 @@ namespace MyGame.BlockTerrain
             {
                 for (int z = 0; z < Size; z++)
                 {
-                    float height = Mathf.PerlinNoise((x + Position.x) / 64f, (z + Position.z) / 60f) * 16f +
+                    int height = 
+                        Mathf.FloorToInt(
+                        Mathf.PerlinNoise((x + Position.x) / 64f, (z + Position.z) / 60f) * 16f +
                         Mathf.PerlinNoise((x + Position.x) / 36f, (z + Position.z) / 30f) * 8f +
                         Mathf.PerlinNoise((x + Position.x) / 16f, (z + Position.z) / 25f) * 4f +
                         Mathf.PerlinNoise((x + Position.x) / 8f, (z + Position.z) / 8f) * 2f
-                        + 96f;
+                        + 96f);
 
                     for (int y = 0; y < Height; y++)
                     {
-                        if(y + Position.y < height)
+                        var pos = y + Position.y;
+
+                        if(pos == height)
                         {
-                            Blocks[PointToIndex(x, y, z)] = BlockType.Filled;
+                            Blocks[PointToIndex(x, y, z)] = BlockType.Grass;
                         }
-                        else
+                        if(pos < height && pos > height - 6)
                         {
-                            Blocks[PointToIndex(x, y, z)] = BlockType.Void;
+                            Blocks[PointToIndex(x, y, z)] = BlockType.Dirt;
+                        }
+                        if(pos <= height - 6)
+                        {
+                            Blocks[PointToIndex(x, y, z)] = BlockType.Stone;
                         }
                     }
                 }
