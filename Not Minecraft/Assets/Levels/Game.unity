@@ -136,6 +136,8 @@ GameObject:
   - component: {fileID: 363479354}
   - component: {fileID: 363479353}
   - component: {fileID: 363479352}
+  - component: {fileID: 363479357}
+  - component: {fileID: 363479358}
   m_Layer: 0
   m_Name: PlayerCamera
   m_TagString: Untagged
@@ -243,7 +245,7 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 1
+  orthographic: 0
   orthographic size: 20.268862
   m_Depth: 0
   m_CullingMask:
@@ -267,14 +269,54 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 363479351}
-  m_LocalRotation: {x: 0.339137, y: 0.25076422, z: -0.09430602, w: 0.9017815}
-  m_LocalPosition: {x: 27.8, y: 137.1, z: 36.8}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 8, y: 137.1, z: 8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 41.22, y: 31.08, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &363479357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 363479351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 133759b3d345df44d9456bbb133bf5cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  World: {fileID: 585060002}
+  RenderDistance: 6
+--- !u!143 &363479358
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 363479351}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &585060000
 GameObject:
   m_ObjectHideFlags: 0
@@ -325,6 +367,3 @@ MonoBehaviour:
   Configs:
     Name: 
     Seed: 0
-    Width: 8
-    Height: 32
-    Depth: 8

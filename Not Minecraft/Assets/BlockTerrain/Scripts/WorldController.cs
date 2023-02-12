@@ -1,5 +1,3 @@
-
-
 namespace MyGame.BlockTerrain
 {
     using System.Collections.Generic;
@@ -11,6 +9,8 @@ namespace MyGame.BlockTerrain
 
     public class WorldController : MonoBehaviour
     {
+        private const int WorldHeight = 32;
+
         public Dictionary<int3, Chunk> ChunkPositionMap;
 
         public ChunkGameObject ChunkPrefab;
@@ -21,12 +21,23 @@ namespace MyGame.BlockTerrain
 
         public WorldConfig Configs;
 
+        private List<Chunk> ChunksAwaitingMesh;
+
         private ObjectPool<ChunkGameObject> ChunkGOPool;
+
+        private void Awake()
+        {
+            ChunkGOPool = new ObjectPool<ChunkGameObject>(CreateChunkGameObject);
+            ChunkPositionMap = new Dictionary<int3, Chunk>();
+            ChunksAwaitingMesh = new List<Chunk>();
+
+            MeshData = new MeshData();
+            MeshData.Initialize(100000);
+        }
 
         private void Start()
         {
             EventSystem.Instance.RegisterEvent(EventChannel.CreateNewGame, OnCreateWorld);
-
             Initialize(Configs);
         }
 
@@ -37,47 +48,11 @@ namespace MyGame.BlockTerrain
                 var eventArgs = args as NewGameEventArgs;
                 Initialize(eventArgs.Configs);
             }
-
         }
 
         public void Initialize(WorldConfig config)
         {
             Configs = config;
-
-            ChunkGOPool = new ObjectPool<ChunkGameObject>(CreateChunkGameObject);
-            ChunkPositionMap = new Dictionary<int3, Chunk>();
-
-            for (int x = 0; x < Configs.Width; x++)
-            {
-                for (int z = 0; z < Configs.Depth; z++)
-                {
-                    CreateChunkAt(x * Chunk.Size, z * Chunk.Size);
-                }
-            }
-
-            MeshData meshData = new MeshData();
-            meshData.Initialize(100000);
-
-            foreach(var chunk in ChunkPositionMap.Values)
-            {
-                MeshBuilder.CreateSimpleMesh(chunk, meshData);
-                var mesh = meshData.ToMesh();
-                var chunkGO = ChunkGOPool.Get();
-                chunkGO.gameObject.SetActive(true);
-
-                chunkGO.transform.position = new Vector3(chunk.Position.x, chunk.Position.y, chunk.Position.z);
-                chunkGO.SetMesh(mesh);
-
-                if(meshData.VertexCount == 0)
-                {
-                    chunkGO.gameObject.SetActive(false);
-                    ChunkGOPool.Return(chunkGO);
-                }
-
-                meshData.Reset();
-            }
-
-            meshData.Dispose();
         }
 
         public bool CreateChunkAt(int x, int z)
@@ -89,17 +64,50 @@ namespace MyGame.BlockTerrain
                 return false;
             }
 
-            for (int y = 0; y < Configs.Height; y++)
+            for (int y = 0; y < WorldHeight; y++)
             {
                 Chunk chunk = new(chunkPosition);
                 chunk.GenerateBlocks();
                 ChunkPositionMap.Add(chunkPosition, chunk);
                 chunk.RefreshNeighbors(this);
 
+                ChunksAwaitingMesh.Add(chunk);
                 chunkPosition.y += Chunk.Height;
             }
 
             return true;
+        }
+
+        public void GenerateTerrain(int3 center, int radius)
+        {
+            for (int x = -radius; x <= radius; x++)
+            {
+                for (int z = -radius; z <= radius; z++)
+                {
+                    CreateChunkAt(center.x + (x * Chunk.Size), center.z + (z * Chunk.Size));
+                }
+            }
+
+            foreach(var chunk in ChunksAwaitingMesh)
+            {
+                MeshBuilder.CreateSimpleMesh(chunk, MeshData);
+                var mesh = MeshData.ToMesh();
+                var chunkGO = ChunkGOPool.Get();
+                chunkGO.gameObject.SetActive(true);
+
+                chunkGO.transform.position = new Vector3(chunk.Position.x, chunk.Position.y, chunk.Position.z);
+                chunkGO.SetMesh(mesh);
+
+                if (MeshData.VertexCount == 0)
+                {
+                    chunkGO.gameObject.SetActive(false);
+                    ChunkGOPool.Return(chunkGO);
+                }
+
+                MeshData.Reset();
+            }
+
+            ChunksAwaitingMesh.Clear();
         }
 
         public bool GetChunkAt(int x, int y, int z, out Chunk ch)
@@ -121,11 +129,21 @@ namespace MyGame.BlockTerrain
         public static int3 WorldToChunkPosition(int x, int y, int z)
         {
             return new int3(
-                x < 0 ? (int)((x - Chunk.Size) / (float)Chunk.Size) * Chunk.Size : (int)(x / (float)Chunk.Size) * Chunk.Size,
-                y < 0 ? (int)((y - Chunk.Height) / (float)Chunk.Height) * Chunk.Height : (int)(y / (float)Chunk.Height) * Chunk.Height,
-                z < 0 ? (int)((z - Chunk.Size) / (float)Chunk.Size) * Chunk.Size : (int)(z / (float)Chunk.Size) * Chunk.Size
+                x < 0 ? (int)((x - 1) / (float)Chunk.Size) * Chunk.Size : (int)(x / (float)Chunk.Size) * Chunk.Size,
+                y < 0 ? (int)((y - 1) / (float)Chunk.Height) * Chunk.Height : (int)(y / (float)Chunk.Height) * Chunk.Height,
+                z < 0 ? (int)((z - 1) / (float)Chunk.Size) * Chunk.Size : (int)(z / (float)Chunk.Size) * Chunk.Size
             );
         }
+
+        public static int3 WorldToChunkPosition(float x, float y, float z)
+        {
+            return new int3(
+                x < 0 ? (int)((x - Chunk.Size) / Chunk.Size) * Chunk.Size : (int)(x / Chunk.Size) * Chunk.Size,
+                y < 0 ? (int)((y - Chunk.Height) / Chunk.Height) * Chunk.Height : (int)(y / Chunk.Height) * Chunk.Height,
+                z < 0 ? (int)((z - Chunk.Size) / Chunk.Size) * Chunk.Size : (int)(z / Chunk.Size) * Chunk.Size
+            );
+        }
+
     }
 }
 

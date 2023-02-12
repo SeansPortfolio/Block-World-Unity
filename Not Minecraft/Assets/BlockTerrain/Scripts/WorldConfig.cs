@@ -11,12 +11,6 @@ namespace MyGame.BlockTerrain
 
         public int Seed;
 
-        public int Width;
-
-        public int Height;
-
-        public int Depth;
-
     }
 }
 
